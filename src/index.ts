@@ -23,6 +23,7 @@ class App {
     }
 
     constructor(
+        // We can inherit these classes and use directly inside this class, but it'll not quiet readable.
         public student: Student,
         public management: Management
     ) {}
