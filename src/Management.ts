@@ -1,5 +1,6 @@
+import chalk from 'chalk';
 import inquirer from 'inquirer';
-import { IEnrollStudent, Nullable } from './IStudent';
+import { IEnrollStudent, Nullable } from './IStudent.js';
 
 
 export class Management {
@@ -16,14 +17,14 @@ export class Management {
     async getAllCourses(name: string): Promise<Nullable<Omit<IEnrollStudent, 'studentId'>>> {
         console.log('\n')
         this.availableCourse.map((course, i) => {
-            console.log(`________${i+1}_________\nName: ${course.name}\nFee: $${course.fee}`)
+            console.log(chalk.yellowBright(`________${chalk.greenBright(i+1)}_________\nName: ${chalk.greenBright(course.name)}\nFee: $${chalk.greenBright(course.fee)}`))
         })
         console.log('\n')
         const promptEnroll = await inquirer.prompt([
             {
                 type: 'confirm',
                 name: 'enroll',
-                message: 'Do you want to enroll in any program'
+                message: chalk.bgCyan('Do you want to enroll in any program')
             }
         ])
         if(promptEnroll.enroll){
@@ -35,18 +36,18 @@ export class Management {
 
     async billPayment(user: IEnrollStudent): Promise<IEnrollStudent | undefined> {
         if(user.status === 'UNPAID') {
-            console.log(`\nyou're going to pay $${user.course.fee}\n`)
+            console.log(chalk.bgGreen(`\nyou're going to pay ${chalk.bgMagenta('$'+user.course.fee)}\n`))
             await inquirer.prompt([
                 {
                     type: 'rawlist',
                     name: 'method',
-                    message: 'We currently support these platforms.',
+                    message: chalk.bgMagenta('We currently support these platforms.'),
                     default: 'Binance',
                     choices: [
-                        'Easypaisa',
-                          'Binance',
-                          'UBL Digital',
-                          'Naya Pay'
+                        chalk.yellow('Easypaisa'),
+                        chalk.yellow('Binance'),
+                        chalk.yellow('UBL Digital'),
+                        chalk.yellow('Naya Pay')
                         ],
                     },
                 ])
@@ -58,15 +59,15 @@ export class Management {
                         type: 'input',
                         name: 'address',
                         message: 'Enter your wallet address',
-                        default: this.default_wallet_address
+                        default: chalk.magenta(this.default_wallet_address)
                     }
                 ])
                 // if(amountPrompt.address) {
-                console.log('_____________________\n\nTransaction is under process. we\'ll share details with you shortly. Thanks\n_____________________');
+                console.log(chalk.yellow('_____________________\n\nTransaction is under process. we\'ll share details with you shortly. Thanks\n_____________________'));
                 // }
                 return {...user, status: 'PAID'}
         }else {
-            console.log(`____________\n\nYou already paid  $${user.course.fee}\n____________`);
+            console.log(chalk.magenta(`____________\n\nYou already paid  ${chalk.cyan('$'+user.course.fee)}\n____________`));
             return;
         }
     }
@@ -76,7 +77,7 @@ export class Management {
            {
                type: 'confirm',
                name: 'bill',
-               message: 'Do you want to pay the bill? '
+               message: chalk.bgCyan('Do you want to pay the bill? ')
            }
        ])
        if(promptBalance.bill){
@@ -93,7 +94,7 @@ export class Management {
                 type: 'list',
                 name: 'course',
                 message: 'which course you want to enroll in? ',
-                choices: this.availableCourse.map((course) => ({ name: course.name, value: course.name[0]}))
+                choices: this.availableCourse.map((course) => ({ name: chalk.green(course.name), value: course.name[0]}))
             },
         ])
         const course = this.availableCourse.find((course) => course.name.startsWith(promptCourses.course));

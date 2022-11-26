@@ -1,4 +1,12 @@
-"use strict";
+#!/usr/bin/env node
+
+
+/*
+This project is a simple console based Student Management System.
+In this project you will be learning how to add new students, how to generate a 5 digit unique studentID for each student, how to enroll students in the given courses.
+Also, you will be implementing the following operations enroll, view balance, pay tuition fees, show status, etc.
+The status will show all the details of the student including name, id, courses enrolled and balance.This is one of the best projects to implement the Object Oriented Programming concepts.
+*/
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,15 +16,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const inquirer_1 = __importDefault(require("inquirer"));
-const Management_1 = require("./Management");
-const Student_1 = require("./Student");
+import inquirer from 'inquirer';
+import { Management } from './Management.js';
+import { Student } from './Student.js';
+import figlet from 'figlet';
+import gradient from 'gradient-string';
+import chalk from 'chalk';
 class App {
-    constructor(student, management) {
+    constructor(
+    // We can inherit these classes and use directly inside this class, but that will not quiet readable.
+    student, management) {
         this.student = student;
         this.management = management;
         this.studentStatus = {
@@ -31,18 +40,18 @@ class App {
     }
     initApp() {
         return __awaiter(this, void 0, void 0, function* () {
-            const prompt = yield inquirer_1.default.prompt([
+            const prompt = yield inquirer.prompt([
                 {
                     type: 'list',
                     name: 'methods',
-                    message: 'Select your preference: ',
+                    message: chalk.bgCyan('Select your preference: '),
                     choices: [
                         {
-                            name: 'Register as a new user',
+                            name: chalk.cyanBright('Register as a new user'),
                             value: 'register',
                         },
                         {
-                            name: 'Check available courses',
+                            name: chalk.cyanBright('Check available courses'),
                             value: 'courses'
                         }
                     ]
@@ -50,7 +59,7 @@ class App {
             ]);
             if (prompt.methods === 'register') {
                 const user = yield this.student.generateStudent();
-                if (!user)
+                if (!user.studentName)
                     return;
                 if (!this.studentStatus.course.name) {
                     const enrolled = yield this.management.getAllCourses(user.studentName);
@@ -87,7 +96,7 @@ class App {
                     break;
                 case "B":
                     if (this.studentStatus.status === 'UNPAID') {
-                        console.log(`You've not not the fee yet. Payable fee $${this.studentStatus.course.fee}`);
+                        console.log(chalk.bgRed(`\nYou've not pay the fee yet. Payable fee $${chalk.yellow(this.studentStatus.course.fee)}\n`));
                         const userPaid = yield this.management.balanceInquiry(this.studentStatus);
                         if (userPaid) {
                             this.studentStatus = userPaid;
@@ -95,13 +104,14 @@ class App {
                         }
                     }
                     else {
-                        console.log(`______________\n\nYour One Year fee has : $${this.studentStatus.course.fee}\nStatus: ${this.studentStatus.status}\n_______________`);
+                        console.log(chalk.green(`______________\n\nYour One Year fee has : $${chalk.yellow(this.studentStatus.course.fee)}\nStatus: ${chalk.yellow(this.studentStatus.status)}\n_______________`));
                         this.processMethods();
                     }
                     break;
                 case "L":
+                    // const status = this.student.LearningMaterial(this.studentStatus);
                     if (this.studentStatus.status === 'UNPAID') {
-                        console.log(`\n\nYou can\'t access the learning material without paying the fee: $${this.studentStatus.course.fee}.\n_______________`);
+                        console.log(chalk.red(`\n\nYou can\'t access the learning material without paying the fee: $${this.studentStatus.course.fee}.\n_______________`));
                         const userPaid = yield this.management.balanceInquiry(this.studentStatus);
                         if (userPaid) {
                             this.studentStatus = userPaid;
@@ -127,9 +137,21 @@ class App {
             course: user.course,
             status: user.status
         };
-        console.log(`____________\n\nStudent Name: ${user === null || user === void 0 ? void 0 : user.studentName}\nStudent ID: ${user === null || user === void 0 ? void 0 : user.studentId}\nCourse: ${user.course.name}\nCourse Fee: $${user.course.fee}\nStatus: ${user.status}\n______________`);
+        console.log(chalk.bold.yellowBright(`____________\n\nStudent Name: ${chalk.greenBright(user === null || user === void 0 ? void 0 : user.studentName)}\nStudent ID: ${chalk.greenBright(user === null || user === void 0 ? void 0 : user.studentId)}\nCourse: ${chalk.greenBright(user.course.name)}\nCourse Fee: $${chalk.greenBright(user.course.fee)}\nStatus: ${chalk.greenBright(user.status)}\n______________`));
     }
 }
-const app = new App(new Student_1.Student, new Management_1.Management);
-app.initApp();
-//# sourceMappingURL=index.js.map
+figlet.text('School-Manager!', {
+    horizontalLayout: 'default',
+    verticalLayout: 'default',
+    width: 120,
+    whitespaceBreak: true
+}, ((err, data) => {
+    if (err) {
+        console.log(err);
+    }
+    console.log('\n');
+    console.log(gradient.rainbow(data));
+    console.log('\n');
+    const app = new App(new Student, new Management);
+    app.initApp();
+}));

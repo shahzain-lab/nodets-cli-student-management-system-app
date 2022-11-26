@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,31 +7,28 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Student = void 0;
-const inquirer_1 = __importDefault(require("inquirer"));
-const uuid_1 = require("uuid");
-class Student {
+import chalk from 'chalk';
+import inquirer from 'inquirer';
+import { v4 as uuidv4 } from 'uuid';
+export class Student {
     constructor() {
         this.availableMethods = [
             "Learning Material",
             "Balance Inquiry",
             "Pay Fee",
-            "Status"
+            "Status",
+            "Exit"
         ];
     }
     fundsMethods() {
         return __awaiter(this, void 0, void 0, function* () {
             console.log('\n');
-            const promptMethods = yield inquirer_1.default.prompt([
+            const promptMethods = yield inquirer.prompt([
                 {
                     type: 'list',
                     name: 'method',
-                    message: 'Select one of the following method',
-                    choices: this.availableMethods.map((name) => ({ name, value: name[0] }))
+                    message: chalk.bgCyan('Select one of the following method'),
+                    choices: this.availableMethods.map((name) => ({ name: chalk.green(name), value: name[0] }))
                 }
             ]);
             const method = this.availableMethods.find((name) => name.startsWith(promptMethods.method));
@@ -41,16 +37,16 @@ class Student {
     }
     LearningMaterial(user) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(`________________\n\nThis one year of course will teach you everything about ${user.course.name}.\none onsite and two online classes every week.\nwe'll follow ${user.course.name} books available in description.\n________________`);
+            console.log(chalk.green(`________________\n\nThis one year of course will teach you everything about ${chalk.magenta(user.course.name)}.\none onsite and two online classes every week.\nwe'll follow ${chalk.magenta(user.course.name)} books available in description.\n________________`));
         });
     }
     generateStudent() {
         return __awaiter(this, void 0, void 0, function* () {
-            const promptUser = yield inquirer_1.default.prompt([
+            const promptUser = yield inquirer.prompt([
                 {
                     type: 'input',
                     name: 'name',
-                    message: 'Your username: '
+                    message: chalk.bgCyan('Your username: ')
                 }
             ]);
             const st = promptUser.name;
@@ -62,8 +58,6 @@ class Student {
         });
     }
     generateID() {
-        return (0, uuid_1.v4)().substring(0, 5);
+        return uuidv4().substring(0, 5);
     }
 }
-exports.Student = Student;
-//# sourceMappingURL=Student.js.map

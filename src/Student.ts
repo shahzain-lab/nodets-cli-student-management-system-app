@@ -1,13 +1,15 @@
+import chalk from 'chalk';
 import inquirer from 'inquirer';
 import { v4 as uuidv4 } from 'uuid';
-import { IEnrollStudent, IStudent } from './IStudent';
+import { IEnrollStudent, IStudent } from './IStudent.js';
 
 export class Student {
     private availableMethods = [
         "Learning Material",
         "Balance Inquiry",
         "Pay Fee",
-        "Status"
+        "Status",
+        "Exit"
     ]
 
     async fundsMethods(): Promise<{key?: string; method?: string}> {
@@ -16,8 +18,8 @@ export class Student {
             {
                 type: 'list',
                 name: 'method',
-                message: 'Select one of the following method',
-                choices: this.availableMethods.map((name) => ({name, value: name[0]}))
+                message: chalk.bgCyan('Select one of the following method'),
+                choices: this.availableMethods.map((name) => ({name: chalk.green(name), value: name[0]}))
             }
         ])
         const method = this.availableMethods.find((name) => name.startsWith(promptMethods.method));
@@ -25,7 +27,7 @@ export class Student {
     }
 
     async LearningMaterial(user: IEnrollStudent) {
-     console.log(`________________\n\nThis one year of course will teach you everything about ${user.course.name}.\none onsite and two online classes every week.\nwe'll follow ${user.course.name} books available in description.\n________________`)
+     console.log(chalk.green(`________________\n\nThis one year of course will teach you everything about ${chalk.magenta(user.course.name)}.\none onsite and two online classes every week.\nwe'll follow ${chalk.magenta(user.course.name)} books available in description.\n________________`))
     }
 
     async generateStudent(): Promise<IStudent> {
@@ -33,9 +35,10 @@ export class Student {
             {
                 type: 'input',
                 name: 'name',
-                message: 'Your username: '
+                message: chalk.bgCyan('Your username: ')
             }
-        ])
+        ]);
+
        
         const st = promptUser.name;
         const id = this.generateID();

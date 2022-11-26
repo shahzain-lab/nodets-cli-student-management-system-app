@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,13 +7,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Management = void 0;
-const inquirer_1 = __importDefault(require("inquirer"));
-class Management {
+import chalk from 'chalk';
+import inquirer from 'inquirer';
+export class Management {
     constructor() {
         this.default_wallet_address = "0xk99_9nNFJk_4mBJKHRI_ljir39mN_jeOJNOO";
         this.availableCourse = [
@@ -30,14 +25,14 @@ class Management {
         return __awaiter(this, void 0, void 0, function* () {
             console.log('\n');
             this.availableCourse.map((course, i) => {
-                console.log(`________${i + 1}_________\nName: ${course.name}\nFee: $${course.fee}`);
+                console.log(chalk.yellowBright(`________${chalk.greenBright(i + 1)}_________\nName: ${chalk.greenBright(course.name)}\nFee: $${chalk.greenBright(course.fee)}`));
             });
             console.log('\n');
-            const promptEnroll = yield inquirer_1.default.prompt([
+            const promptEnroll = yield inquirer.prompt([
                 {
                     type: 'confirm',
                     name: 'enroll',
-                    message: 'Do you want to enroll in any program'
+                    message: chalk.bgCyan('Do you want to enroll in any program')
                 }
             ]);
             if (promptEnroll.enroll) {
@@ -51,47 +46,49 @@ class Management {
     billPayment(user) {
         return __awaiter(this, void 0, void 0, function* () {
             if (user.status === 'UNPAID') {
-                console.log(`\nyou're going to pay $${user.course.fee}\n`);
-                yield inquirer_1.default.prompt([
+                console.log(chalk.bgGreen(`\nyou're going to pay ${chalk.bgMagenta('$' + user.course.fee)}\n`));
+                yield inquirer.prompt([
                     {
                         type: 'rawlist',
                         name: 'method',
-                        message: 'We currently support these platforms.',
+                        message: chalk.bgMagenta('We currently support these platforms.'),
                         default: 'Binance',
                         choices: [
-                            'Easypaisa',
-                            'Binance',
-                            'UBL Digital',
-                            'Naya Pay'
+                            chalk.yellow('Easypaisa'),
+                            chalk.yellow('Binance'),
+                            chalk.yellow('UBL Digital'),
+                            chalk.yellow('Naya Pay')
                         ],
                     },
                 ]);
                 console.log('\n');
                 console.log('\n');
-                yield inquirer_1.default.prompt([
+                yield inquirer.prompt([
                     {
                         type: 'input',
                         name: 'address',
                         message: 'Enter your wallet address',
-                        default: this.default_wallet_address
+                        default: chalk.magenta(this.default_wallet_address)
                     }
                 ]);
-                console.log('_____________________\n\nTransaction is under process. we\'ll share details with you shortly. Thanks\n_____________________');
+                // if(amountPrompt.address) {
+                console.log(chalk.yellow('_____________________\n\nTransaction is under process. we\'ll share details with you shortly. Thanks\n_____________________'));
+                // }
                 return Object.assign(Object.assign({}, user), { status: 'PAID' });
             }
             else {
-                console.log(`____________\n\nYou already paid  $${user.course.fee}\n____________`);
+                console.log(chalk.magenta(`____________\n\nYou already paid  ${chalk.cyan('$' + user.course.fee)}\n____________`));
                 return;
             }
         });
     }
     balanceInquiry(user) {
         return __awaiter(this, void 0, void 0, function* () {
-            const promptBalance = yield inquirer_1.default.prompt([
+            const promptBalance = yield inquirer.prompt([
                 {
                     type: 'confirm',
                     name: 'bill',
-                    message: 'Do you want to pay the bill? '
+                    message: chalk.bgCyan('Do you want to pay the bill? ')
                 }
             ]);
             if (promptBalance.bill) {
@@ -105,12 +102,12 @@ class Management {
     }
     getEnroll(studentName = '') {
         return __awaiter(this, void 0, void 0, function* () {
-            const promptCourses = yield inquirer_1.default.prompt([
+            const promptCourses = yield inquirer.prompt([
                 {
                     type: 'list',
                     name: 'course',
                     message: 'which course you want to enroll in? ',
-                    choices: this.availableCourse.map((course) => ({ name: course.name, value: course.name[0] }))
+                    choices: this.availableCourse.map((course) => ({ name: chalk.green(course.name), value: course.name[0] }))
                 },
             ]);
             const course = this.availableCourse.find((course) => course.name.startsWith(promptCourses.course));
@@ -120,5 +117,3 @@ class Management {
         });
     }
 }
-exports.Management = Management;
-//# sourceMappingURL=Management.js.map
